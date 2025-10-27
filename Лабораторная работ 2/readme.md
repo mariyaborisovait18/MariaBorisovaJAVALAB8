@@ -229,7 +229,7 @@ ____
 
 Используя разработанную сущность реализуйте схему, представленную на рисунке 2.
 
-![Picture](Лабораторная работ 2/zLSE_SgQlAHb-NWu3dEGDRehr7sOci_8_mby1G4r0EgLEe5e2lya8PO7gOlU72WCl7dVywd8tyZ5gmf94clh-HKO.jpg)
+![Picture](zLSE_SgQlAHb-NWu3dEGDRehr7sOci_8_mby1G4r0EgLEe5e2lya8PO7gOlU72WCl7dVywd8tyZ5gmf94clh-HKO.jpg)
 
 ___
 
