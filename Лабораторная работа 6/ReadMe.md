@@ -315,7 +315,7 @@ ToStringAnnotationTest:
 
 Пример пройденного тестирования:
 
-![Alt text](<img width="1234" height="619" alt="image" src="https://github.com/user-attachments/assets/4871c799-5e30-4351-81cd-c231ee0a68d7" />)
+![Alt text](S9FBg9VkGXEpO8-DEUA3B2ydxxGT7Fi4iW4EGyqMAMtpwJNAZ8qrmDx0Sn4x6egTKJLMfmUQ4zL3SjS6CA8KFCpG.jpg)
 
 CacheAnnotationTest:
 
