@@ -315,7 +315,7 @@ ToStringAnnotationTest:
 
 Пример пройденного тестирования:
 
-![Alt text](S9FBg9VkGXEpO8-DEUA3B2ydxxGT7Fi4iW4EGyqMAMtpwJNAZ8qrmDx0Sn4x6egTKJLMfmUQ4zL3SjS6CA8KFCpG.jpg)
+![Alt text](тестTo.jpg)
 
 CacheAnnotationTest:
 
@@ -333,4 +333,6 @@ CacheAnnotationTest:
 
 Таким образом, класс демонстрирует полный набор тестов для аннотации @Cache и её обработчика, включая как реальные проверки, так и использование mock‑объектов.
 
+Пример пройденного тестирования:
 
+![Alt text](S9FBg9VkGXEpO8-DEUA3B2ydxxGT7Fi4iW4EGyqMAMtpwJNAZ8qrmDx0Sn4x6egTKJLMfmUQ4zL3SjS6CA8KFCpG.jpg)
