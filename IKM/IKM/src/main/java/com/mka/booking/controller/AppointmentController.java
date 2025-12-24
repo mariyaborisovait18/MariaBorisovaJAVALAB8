@@ -6,14 +6,18 @@ import com.mka.booking.repository.ClientRepository;
 import com.mka.booking.repository.EmployeeRepository;
 import com.mka.booking.repository.ServiceRepository;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
+/**
+ * Контроллер для управления записями (Appointment).
+ * Обрабатывает операции просмотра, создания, редактирования и удаления записей.
+ */
 @Controller
 @RequestMapping("/appointments")
 public class AppointmentController {
@@ -23,6 +27,14 @@ public class AppointmentController {
     private final EmployeeRepository employeeRepository;
     private final ServiceRepository serviceRepository;
 
+    /**
+     * Конструктор с внедрением зависимостей.
+     *
+     * @param appointmentRepository репозиторий записей
+     * @param clientRepository      репозиторий клиентов
+     * @param employeeRepository    репозиторий сотрудников
+     * @param serviceRepository     репозиторий услуг
+     */
     public AppointmentController(AppointmentRepository appointmentRepository,
                                  ClientRepository clientRepository,
                                  EmployeeRepository employeeRepository,
@@ -33,11 +45,18 @@ public class AppointmentController {
         this.serviceRepository = serviceRepository;
     }
 
-    // ✅ Метод для установки min/max дат
+    /**
+     * Добавляет в модель ограничения по дате:
+     * — запись возможна только с завтрашнего дня
+     * — максимум на 2 недели вперёд
+     * — время с 09:00 до 21:00
+     *
+     * @param model модель представления
+     */
     private void addDateLimits(Model model) {
         LocalDate today = LocalDate.now();
-        LocalDate min = today.plusDays(1);      // завтра
-        LocalDate max = today.plusWeeks(2);     // через 2 недели
+        LocalDate min = today.plusDays(1);
+        LocalDate max = today.plusWeeks(2);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
@@ -45,30 +64,44 @@ public class AppointmentController {
         model.addAttribute("maxDate", max.atTime(21, 0).format(formatter));
     }
 
-    // ✅ Список записей
+    /**
+     * Отображает список всех записей.
+     *
+     * @param model модель представления
+     * @return шаблон списка записей
+     */
     @GetMapping
     public String listAppointments(Model model) {
         model.addAttribute("appointments", appointmentRepository.findAll());
         return "appointments/list";
     }
 
-    // ✅ Форма добавления записи
+    /**
+     * Отображает форму создания новой записи.
+     *
+     * @param model модель представления
+     * @return шаблон формы добавления
+     */
     @GetMapping("/add")
     public String addAppointmentForm(Model model) {
-
         model.addAttribute("appointment", new Appointment());
         model.addAttribute("clients", clientRepository.findAll());
         model.addAttribute("employees", employeeRepository.findAll());
         model.addAttribute("services", serviceRepository.findAll());
-
         addDateLimits(model);
-
         return "appointments/add";
     }
 
-    // ✅ Обработка добавления записи
+    /**
+     * Обрабатывает отправку формы создания записи.
+     *
+     * @param appointment объект записи, заполненный пользователем
+     * @param result      ошибки валидации
+     * @param model       модель представления
+     * @return перенаправление на список или возврат формы при ошибке
+     */
     @PostMapping("/add")
-    public String addAppointment(@Valid @ModelAttribute("appointment") Appointment appointment,
+    public String addAppointment(@ModelAttribute("appointment") @Valid Appointment appointment,
                                  BindingResult result,
                                  Model model) {
 
@@ -86,7 +119,13 @@ public class AppointmentController {
         return "redirect:/appointments";
     }
 
-    // ✅ Форма редактирования записи
+    /**
+     * Отображает форму редактирования существующей записи.
+     *
+     * @param id    идентификатор записи
+     * @param model модель представления
+     * @return шаблон формы редактирования
+     */
     @GetMapping("/edit/{id}")
     public String editAppointment(@PathVariable Long id, Model model) {
         Appointment appointment = appointmentRepository.findById(id)
@@ -100,16 +139,23 @@ public class AppointmentController {
         model.addAttribute("clients", clientRepository.findAll());
         model.addAttribute("employees", employeeRepository.findAll());
         model.addAttribute("services", serviceRepository.findAll());
-
         addDateLimits(model);
 
         return "appointments/edit";
     }
 
-    // ✅ Обработка редактирования записи
+    /**
+     * Обрабатывает отправку формы редактирования записи.
+     *
+     * @param id             идентификатор редактируемой записи
+     * @param formAppointment объект с обновлёнными данными
+     * @param result         ошибки валидации
+     * @param model          модель представления
+     * @return перенаправление на список или возврат формы при ошибке
+     */
     @PostMapping("/edit/{id}")
     public String updateAppointment(@PathVariable Long id,
-                                    @Valid @ModelAttribute("appointment") Appointment formAppointment,
+                                    @ModelAttribute("appointment") @Valid Appointment formAppointment,
                                     BindingResult result,
                                     Model model) {
 
@@ -136,16 +182,27 @@ public class AppointmentController {
         return "redirect:/appointments";
     }
 
-    // ✅ Удаление записи
+    /**
+     * Удаляет запись по ID.
+     *
+     * @param id идентификатор записи
+     * @return перенаправление на список записей
+     */
     @GetMapping("/delete/{id}")
     public String deleteAppointment(@PathVariable Long id) {
         appointmentRepository.deleteById(id);
         return "redirect:/appointments";
     }
 
-    // ✅ Проверка корректности даты и времени
+    /**
+     * Проверяет корректность даты и времени записи.
+     * — дата должна быть в пределах 2 недель
+     * — запись возможна только с 09:00 до 21:00
+     *
+     * @param dt     дата и время записи
+     * @param result объект для добавления ошибок валидации
+     */
     private void validateDateTime(LocalDateTime dt, BindingResult result) {
-
         LocalDateTime min = LocalDate.now().plusDays(1).atTime(9, 0);
         LocalDateTime max = LocalDate.now().plusWeeks(2).atTime(21, 0);
 
